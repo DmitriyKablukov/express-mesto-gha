@@ -1,40 +1,49 @@
+const mongoose = require('mongoose');
 const User = require('../models/user');
+const STATUS_CODE = require('../utils/constants');
 
 const getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => res.status(500).send({ message: err.message }));
+    .then((users) => res.status(STATUS_CODE.OK_CODE).send(users))
+    .catch((err) => res.status(STATUS_CODE.DEFAULT_ERROR_CODE).send({ message: err.message }));
 };
 
 const getUser = (req, res) => {
-  User.findById(req.params.userId)
+  if (!mongoose.Types.ObjectId.isValid(req.params.userId)) {
+    return res
+      .status(STATUS_CODE.BAD_REQUEST_ERROR_CODE)
+      .send({ message: 'Передан некорректный _id пользователя' });
+  }
+  return User.findById(req.params.userId)
+    .orFail(new Error('NotValidId'))
     .then((user) => {
-      if (!user) {
-        return res.status(404).send({ message: 'Пользователь не найден' });
-      }
-      return res.status(200).send(user);
+      res.status(STATUS_CODE.OK_CODE).send(user);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.message === 'NotValidId') {
         return res
-          .status(400)
+          .status(STATUS_CODE.BAD_REQUEST_ERROR_CODE)
           .send({ message: 'Пользователь по указанному _id не найден' });
       }
-      return res.status(500).send({ message: err.message });
+      return res
+        .status(STATUS_CODE.DEFAULT_ERROR_CODE)
+        .send({ message: err.message });
     });
 };
 
 const createUser = (req, res) => {
   const userData = req.body;
   User.create(userData)
-    .then((user) => res.status(200).send(user))
+    .then((user) => res.status(201).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return res.status(400).send({
+        return res.status(STATUS_CODE.BAD_REQUEST_ERROR_CODE).send({
           message: 'Переданы некорректные данные при создании пользователя',
         });
       }
-      return res.status(500).send({ message: err.message });
+      return res
+        .status(STATUS_CODE.DEFAULT_ERROR_CODE)
+        .send({ message: err.message });
     });
 };
 
@@ -46,19 +55,19 @@ const updateProfile = (req, res) => {
       runValidators: true,
       new: true,
     })
-      .then((user) => res.status(200).send(user))
+      .orFail(new Error({ message: 'Пользователь с указанным _id не найден' }))
+      .then((user) => res.status(STATUS_CODE.OK_CODE).send(user))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          return res.status(400).send({
+          return res.status(STATUS_CODE.BAD_REQUEST_ERROR_CODE).send({
             message: 'Переданы некорректные данные при обновлении профиля',
           });
         }
-        return res.status(500).send({ message: err.message });
+        return res
+          .status(STATUS_CODE.DEFAULT_ERROR_CODE)
+          .send({ message: err.message });
       });
   }
-  return res
-    .status(400)
-    .send({ message: 'Пользователь с указанным _id не найден' });
 };
 
 const updateAvatar = (req, res) => {
@@ -74,18 +83,21 @@ const updateAvatar = (req, res) => {
         new: true,
       },
     )
-      .then((user) => res.status(200).send(user))
+      .orFail(new Error({ message: 'Пользователь с указанным _id не найден' }))
+      .then((user) => res.status(STATUS_CODE.OK_CODE).send(user))
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          return res.status(400).send({
+          return res.status(STATUS_CODE.BAD_REQUEST_ERROR_CODE).send({
             message: 'Переданы некорректные данные при обновлении аватара',
           });
         }
-        return res.status(500).send({ message: err.message });
+        return res
+          .status(STATUS_CODE.DEFAULT_ERROR_CODE)
+          .send({ message: err.message });
       });
   }
   return res
-    .status(404)
+    .status(STATUS_CODE.NOT_FOUND_ERROR_CODE)
     .send({ message: 'Пользователь с указанным _id не найден' });
 };
 
