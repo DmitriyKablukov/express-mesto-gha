@@ -22,7 +22,7 @@ const getUser = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         return res
-          .status(STATUS_CODE.BAD_REQUEST_ERROR_CODE)
+          .status(STATUS_CODE.NOT_FOUND_ERROR_CODE)
           .send({ message: 'Пользователь по указанному _id не найден' });
       }
       return res
@@ -96,9 +96,6 @@ const updateAvatar = (req, res) => {
           .send({ message: err.message });
       });
   }
-  return res
-    .status(STATUS_CODE.NOT_FOUND_ERROR_CODE)
-    .send({ message: 'Пользователь с указанным _id не найден' });
 };
 
 module.exports = {

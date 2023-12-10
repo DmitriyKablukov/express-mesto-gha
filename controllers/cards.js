@@ -39,7 +39,7 @@ const deleteCard = (req, res) => {
     .catch((err) => {
       if (err.message === 'NotValidId') {
         return res
-          .status(STATUS_CODE.BAD_REQUEST_ERROR_CODE)
+          .status(STATUS_CODE.NOT_FOUND_ERROR_CODE)
           .send({ message: 'Карточка по указанному _id не найдена' });
       }
       return res
