@@ -6,7 +6,6 @@ const User = require('../models/user');
 const STATUS_CODE = require('../utils/constants');
 const BadRequestError = require('../errors/bad-request');
 const NotFoundError = require('../errors/not-found');
-const DefaultError = require('../errors/default');
 const ConflictError = require('../errors/conflict');
 const ValidationError = require('../errors/validation');
 const IncorrectEmailPasswordError = require('../errors/incorrect');
@@ -30,7 +29,7 @@ const getUser = (req, res, next) => {
       if (err.message === 'NotValidId') {
         return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
-      return next(new DefaultError());
+      return next();
     });
 };
 
@@ -56,7 +55,7 @@ const createUser = async (req, res, next) => {
     } else if (err.name === 'ValidationError') {
       next(new ValidationError('Переданы некорректные данные при создании пользователя'));
     } else {
-      next(new DefaultError());
+      next();
     }
   }
 };
@@ -78,7 +77,7 @@ const login = async (req, res, next) => {
     if (err.message === 'NotAuthenticate') {
       return next(new IncorrectEmailPasswordError('Неправильный email или пароль'));
     }
-    return next(new DefaultError());
+    return next();
   }
 };
 
@@ -99,7 +98,7 @@ const updateProfile = (req, res, next) => {
         if (err.name === 'ValidationError') {
           return next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
         }
-        return next(new DefaultError());
+        return next();
       });
   }
 };
@@ -126,7 +125,7 @@ const updateAvatar = (req, res, next) => {
         if (err.name === 'ValidationError') {
           return next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
         }
-        return next(new DefaultError());
+        return next();
       });
   }
 };
@@ -146,7 +145,7 @@ const getMe = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
       }
-      return next(new DefaultError());
+      return next();
     });
 };
 

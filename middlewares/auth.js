@@ -1,7 +1,6 @@
 /* eslint-disable consistent-return */
 const jwt = require('jsonwebtoken');
 const IncorrectEmailPasswordError = require('../errors/incorrect');
-const DefaultError = require('../errors/default');
 
 module.exports = (req, res, next) => {
   let payload;
@@ -20,7 +19,7 @@ module.exports = (req, res, next) => {
     if (err.name === 'JsonWebTokenError') {
       return next(new IncorrectEmailPasswordError('С токеном что-то не так'));
     }
-    return next(new DefaultError());
+    return next();
   }
   req.user = payload;
   next();

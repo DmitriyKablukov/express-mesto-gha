@@ -6,7 +6,6 @@ const ValidationError = require('../errors/validation');
 const BadRequestError = require('../errors/bad-request');
 const NotFoundError = require('../errors/not-found');
 const NoAccessError = require('../errors/no-access');
-const DefaultError = require('../errors/default');
 
 const getCards = (req, res, next) => {
   Card.find()
@@ -95,7 +94,7 @@ const likeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Передан некорректный _id карточки'));
       }
-      return next(new DefaultError());
+      return next();
     });
 };
 
@@ -116,7 +115,7 @@ const dislikeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Передан некорректный _id карточки'));
       }
-      return next(new DefaultError());
+      return next();
     });
 };
 
