@@ -8,7 +8,7 @@ module.exports = (req, res, next) => {
     const token = req.headers.authorization;
     console.log(token);
     if (!token) {
-      throw new Error('NotAuthenticate');
+      return next(new IncorrectEmailPasswordError('Неправильный email или пароль'));
     }
     const validToken = token.replace('Bearer ', '');
     payload = jwt.verify(validToken, 'dev_secret');

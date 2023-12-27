@@ -29,7 +29,7 @@ const getUser = (req, res, next) => {
       if (err.message === 'NotValidId') {
         return next(new NotFoundError('Пользователь по указанному _id не найден'));
       }
-      return next();
+      return next(err);
     });
 };
 
@@ -55,7 +55,7 @@ const createUser = async (req, res, next) => {
     } else if (err.name === 'ValidationError') {
       next(new ValidationError('Переданы некорректные данные при создании пользователя'));
     } else {
-      next();
+      next(err);
     }
   }
 };
@@ -77,7 +77,7 @@ const login = async (req, res, next) => {
     if (err.message === 'NotAuthenticate') {
       return next(new IncorrectEmailPasswordError('Неправильный email или пароль'));
     }
-    return next();
+    return next(err);
   }
 };
 
@@ -98,7 +98,7 @@ const updateProfile = (req, res, next) => {
         if (err.name === 'ValidationError') {
           return next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
         }
-        return next();
+        return next(err);
       });
   }
 };
@@ -125,7 +125,7 @@ const updateAvatar = (req, res, next) => {
         if (err.name === 'ValidationError') {
           return next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
         }
-        return next();
+        return next(err);
       });
   }
 };
@@ -145,7 +145,7 @@ const getMe = (req, res, next) => {
       if (err.name === 'ValidationError') {
         return next(new ValidationError('Переданы некорректные данные при обновлении профиля'));
       }
-      return next();
+      return next(err);
     });
 };
 

@@ -26,38 +26,7 @@ const createCard = (req, res, next) => {
       }
     });
 };
-/*
-const deleteCard = (req, res, next) => {
-  if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
-    return res
-      .status(STATUS_CODE.BAD_REQUEST_ERROR_CODE)
-      .send({ message: 'Передан некорректный _id карточки' });
-  }
-  Card.findByIdAndDelete(req.params.cardId)
-    .then((card) => {
-      if (!card) {
-        return res.status(STATUS_CODE.NOT_FOUND_ERROR_CODE).send({
-          message: 'Передан несуществующий _id карточки',
-        });
-      }
-      if (!card.owner.equals(req.user._id)) {
-        throw new Error({ message: 'Вы не можете удалять карточки других пользователей' });
-      } else {
-        res.status(STATUS_CODE.OK_CODE).send({ message: 'Карточка удалена' });
-      }
-    })
-    .catch((err) => {
-      if (err.message === 'NotValidId') {
-        return res
-          .status(STATUS_CODE.NOT_FOUND_ERROR_CODE)
-          .send({ message: 'Карточка по указанному _id не найдена' });
-      }
-      return res
-        .status(STATUS_CODE.DEFAULT_ERROR_CODE)
-        .send({ message: err.message });
-    });
-};
-*/
+
 const deleteCard = (req, res, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.cardId)) {
     return next(new BadRequestError('Передан некорректный _id карточки'));
@@ -94,7 +63,7 @@ const likeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Передан некорректный _id карточки'));
       }
-      return next();
+      return next(err);
     });
 };
 
@@ -115,7 +84,7 @@ const dislikeCard = (req, res, next) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Передан некорректный _id карточки'));
       }
-      return next();
+      return next(err);
     });
 };
 
